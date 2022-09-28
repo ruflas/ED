@@ -2,16 +2,19 @@ package estDatos;
 
 import java.util.Iterator;
 
-public class PeekingIterator<E> implements PeekIterator<Object>, Cloneable {
+public class PeekingIterator<E> implements PeekIterator<Object>{
 	private Iterator<E> it;
-	public PeekingIterator(Iterable<E> t){
+	Object nextVal;
+
+	public PeekingIterator(Iterable<E> t) {
 		it = t.iterator();
+		nextVal = it.hasNext() ? it.next() : null;
 	}
-	
+
 	public PeekingIterator(Iterator<E> t) {
 		it = t;
 	}
-	
+
 	@Override
 	public boolean hasNext() {
 		return it.hasNext();
@@ -19,21 +22,13 @@ public class PeekingIterator<E> implements PeekIterator<Object>, Cloneable {
 
 	@Override
 	public Object next() {
-		return it.next();
+		Object oldNext = nextVal;
+		nextVal = it.hasNext() ? it.next() : null;
+		return oldNext;
 	}
 
 	@Override
-	public Object clone(){  
-	    try{  
-	        return super.clone();  
-	    }catch(Exception e){ 
-	        return null; 
-	    }
-	}
-	
-	@Override
 	public Object peek() {
-		PeekingIterator<E> aux = new PeekingIterator<E>(it); //Es lo mismo que aux = it ???
-		return  aux.next();
+		return nextVal;
 	}
 }
