@@ -2,9 +2,9 @@ package estDatos;
 
 import java.util.Iterator;
 
-public class PeekingIterator<E> implements PeekIterator<Object>{
+public class PeekingIterator<E> implements PeekIterator<E>{
 	private Iterator<E> it;
-	private Object nextValue;
+	private E nextValue;
 	private boolean hasNextE;
 	public PeekingIterator(Iterable<E> t) {
 		it = t.iterator();
@@ -22,15 +22,15 @@ public class PeekingIterator<E> implements PeekIterator<Object>{
 	}
 
 	@Override
-	public Object next() {
+	public E next() {
 		hasNextE = it.hasNext();
-		Object oldValue = nextValue;
+		E oldValue = nextValue;
 		nextValue = it.hasNext() ? it.next() : null;
 		return oldValue;
 	}
 
 	@Override
-	public Object peek() {
+	public E peek() {
 		return nextValue;
 	}
 }
