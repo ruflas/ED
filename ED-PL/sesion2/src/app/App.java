@@ -75,17 +75,6 @@ public final class App {
 		System.out.println("\nResultados utilizando el iterador");
 		Sucesion s = new Sucesion();
 		PeekingIterator<Integer> it = new PeekingIterator<Integer>(s);
-		/*Iterator<Integer> si = s.iterator();
-		term = 0;
-		while(term < limit && si.hasNext()) {
-			term = (int) si.next();
-			if(term>=limit) 
-				System.out.print(term);
-			else
-				System.out.print(term+", ");
-		}
-		*/
-		 
 		term = 0;
 		while(term < limit && it.hasNext()) {
 			term = (int) it.next();
