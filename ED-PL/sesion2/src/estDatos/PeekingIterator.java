@@ -4,11 +4,12 @@ import java.util.Iterator;
 
 public class PeekingIterator<E> implements PeekIterator<Object>{
 	private Iterator<E> it;
-	Object nextVal;
-
+	private Object nextValue;
+	private boolean hasNextE;
 	public PeekingIterator(Iterable<E> t) {
 		it = t.iterator();
-		nextVal = it.hasNext() ? it.next() : null;
+		nextValue = it.hasNext() ? it.next() : null;
+		hasNextE = it.hasNext();
 	}
 
 	public PeekingIterator(Iterator<E> t) {
@@ -17,18 +18,19 @@ public class PeekingIterator<E> implements PeekIterator<Object>{
 
 	@Override
 	public boolean hasNext() {
-		return it.hasNext();
+		return hasNextE;
 	}
 
 	@Override
 	public Object next() {
-		Object oldNext = nextVal;
-		nextVal = it.hasNext() ? it.next() : null;
-		return oldNext;
+		hasNextE = it.hasNext();
+		Object oldValue = nextValue;
+		nextValue = it.hasNext() ? it.next() : null;
+		return oldValue;
 	}
 
 	@Override
 	public Object peek() {
-		return nextVal;
+		return nextValue;
 	}
 }
