@@ -1,11 +1,9 @@
 package estDatos;
 
 import java.util.AbstractSequentialList;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  * Tipo de dato cuyas instancias son listas doblemente enlazadas
@@ -18,7 +16,7 @@ public class MutableList<E> extends AbstractSequentialList<E> {
 	private Node<E> tail;	// Ãºltimo nodo de la lista
 	int size;				// nÃºmero de elementos de la lista
 	
-	List<E> l;
+	
 	/**
 	 * Clase de los nodos de la lista.
 	 * @param <E> tipo de los elementos de la lista
@@ -46,7 +44,8 @@ public class MutableList<E> extends AbstractSequentialList<E> {
 	 * Crea una lista vacÃ­a.
 	 */
 	public MutableList() {
-		l = new ArrayList<E>();
+		
+		this.size=0;
 	}
 	
 	/**
@@ -56,10 +55,7 @@ public class MutableList<E> extends AbstractSequentialList<E> {
 	 */
 	public MutableList(Collection<? extends E> c) {
 		this();
-		Iterator<? extends E> it = c.iterator();
-		while(it.hasNext()) {
-			l.add(it.next());
-		}
+		this.addAll(c);
 	}
 	
 	@Override
@@ -69,7 +65,7 @@ public class MutableList<E> extends AbstractSequentialList<E> {
 
 	@Override
 	public int size() {
-		return this.size();
+		return this.size;
 	}
 	
 	private class MutableListIterator implements ListIterator<E> {
@@ -93,15 +89,18 @@ public class MutableList<E> extends AbstractSequentialList<E> {
 
 		@Override
 		public E next() {
+			if(!hasNext())
+				throw new NoSuchElementException();
 			lastReturned = current;
-			previous = lastReturned;
+			previous = current;
+			current = current.next;
 			currentIndex++;
-			return hasNext() ? current.item : null;
+			return lastReturned.item;
 		}
 
 		@Override
 		public boolean hasPrevious() {
-			return currentIndex-1>0 ? true : false;
+			return currentIndex>0 ? true : false;
 		}
 
 		@Override
@@ -109,8 +108,8 @@ public class MutableList<E> extends AbstractSequentialList<E> {
 			current = previous;
 			lastReturned = current;
 			currentIndex--;
-			//?????previous = previous.previous;
-			return currentIndex-1>0 ? lastReturned.item : null;
+			previous = previous.previous;
+			return currentIndex>0 ? lastReturned.item : null;
 		}
 
 		@Override
@@ -127,20 +126,67 @@ public class MutableList<E> extends AbstractSequentialList<E> {
 		public void remove() {
 			if(lastReturned.item == null)
 				throw new IllegalStateException();
-			//lastReturned.item = new E();
-			currentIndex--;
-			size--;
-
+			if(previous == lastReturned) {
+				//next()
+				currentIndex--;
+				size--;
+				if(hasPrevious())
+					previous = previous.previous;
+				else
+					previous = null;
+				current = current.next;
+				lastReturned = null;
+			}
+			else if(current==lastReturned) {
+				//previous()
+				size--;
+				if(hasNext())
+					current = current.next;
+				else
+					current = null;
+				lastReturned = null;
+			}
+			
+			if(previous == null)
+				head = current;
+			else if(current == null)
+				tail = previous;
 		}
 
 		@Override
 		public void set(E e) {
-			current = new Node(e,previous,current);
+			if(lastReturned == null)
+				throw new IllegalStateException();
+			if(previous == lastReturned) {
+				//next()
+				lastReturned.item = e;
+			}
+			else if(current==lastReturned) {
+				//previous()
+				lastReturned.item = e;
+			}
 		}
 
 		@Override
 		public void add(E e) {
-			
+			Node<E> node = new Node<>(e, previous, current);
+			if(previous != null && current !=null) {
+				previous.next=node;
+				current.previous = node;
+			}
+			else if(previous == null) {
+					head = node;
+					previous = node;
+					if(size == 0)
+						tail = node;
+			}
+			else if(current == null) {
+				tail = node;
+				previous = node;
+			}
+			currentIndex++;
+			size++;
+			lastReturned = null;
 		}
 		
 	}
