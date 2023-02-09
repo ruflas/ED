@@ -1,0 +1,2 @@
+https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/iterators/PeekingIterator.html#peek--
+https://commons.apache.org/proper/commons-collections/apidocs/src-html/org/apache/commons/collections4/iterators/PeekingIterator.html#line.115
